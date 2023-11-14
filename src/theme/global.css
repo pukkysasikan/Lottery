@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Mali&display=swap');
+
+html,
+ion-text {
+  padding: 0;
+  margin: 0;
+  font-family: 'Mali', cursive;
+}
+
+.container {
+    background-color: #fff;
+  width: 100%;
+  height: calc(100% - 56px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+}
+
+.header-container{
+    height: 15%;
+}
+
+.segment-container{
+    width: 90%;
+    margin-top: 5%;
+    .segment{
+        height: 75px;
+        border-radius: 20px;
+        
+    }
+}
+ion-segment {
+    margin-top: 0.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    background-color: #ffefea;
+    border-radius: 20px;
+}
+
+ion-segment ion-segment-button {
+    font-size: 24px;
+    --background-checked: #FF8A65;
+    --indicator-color: transparent;
+    --color-checked: #fff;
+    --border-radius : 20px;
+}
+
+.textheader{
+    text-align: center;
+    color: #fff;
+}
+
+.subheader-left {
+    padding-left: 1rem;
+    display: flex;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    border-right: solid 3px #fff;
+}
+
+.subheader-right {
+    padding-right: 1rem;
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-col-digit{
+    background-color: #F5F5F5;
+    text-align: center;
+    font-size: 24px;
+    height:50px;
+    border-left: solid 5px #fff;
+    border-right: solid 5px #fff;
+}
+
+.grid-col-digit-input{
+    text-align: center;
+    font-size: 24px;
+    height:50px;
+    width: 100px;
+    border-left: solid 5px #fff;
+    border-right: solid 5px #fff;
+}
+
