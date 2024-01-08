@@ -15,7 +15,7 @@ import { useState } from "react";
 import TwoDigitTable from "../components/TwoDigitTable";
 
 const HomePage: React.FC = () => {
-  const [tab, setTab] = useState("two-digit");
+  const [tab, setTab] = useState("three-digit");
 
   const onSelectSegment = (segment: any) => {
     if (segment.detail.value === "2") {
@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
           totalPriceOfThreeDigits={300000}
         />
         <div className="container">
-          <SegmentSwitch onChange={onSelectSegment} />
+          {/* <SegmentSwitch onChange={onSelectSegment} /> */}
           {tab === "two-digit" ? <TwoDigitTable /> : <ThreeDigitTable />}
         </div>
       </IonContent>

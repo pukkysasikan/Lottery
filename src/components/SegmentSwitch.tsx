@@ -9,10 +9,9 @@ const SegmentSwitch: React.FC<SegmentSwitchProps> = ({ onChange }) => {
     <div className="segment-container">
       <IonSegment
         className="segment"
-        value="2"
+        value="3"
         onIonChange={onChange}
-        mode="md"
-      >
+        mode="md">
         <IonSegmentButton className="segment-btn" value="2">
           <IonText>2 ตัว</IonText>
         </IonSegmentButton>
