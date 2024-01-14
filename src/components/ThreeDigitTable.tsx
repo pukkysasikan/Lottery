@@ -14,58 +14,85 @@ import {
   IonLabel,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
-import { createData, readAllData, deleteData } from "../utils/firestore";
 import { trashOutline } from "ionicons/icons";
+
+interface InputData {
+  id?: string;
+  number?: string;
+  straight?: string;
+  twoDigit?: string;
+  lower?: string;
+}
 
 const ThreeDigitTable: React.FC = () => {
   const [dataList, setDataList] = useState<any[]>([]);
   const [length, setLength] = useState<number>(0);
   const [load, setLoad] = useState<boolean>(false);
   const [focusValue, setFocusValue] = useState<string>("");
+  
+  const [inputData, setInputData] = useState<InputData>({});
+  const [dataListInput, setDataListInput] = useState<InputData[]>([]);
 
-  useEffect(() => {
-    getInitialData();
-  }, []);
-
-  const getInitialData = async () => {
-    setLoad(true);
-    const data = await readAllData("lotto");
-    setDataList(data);
-    setLength(data.length);
-    setLoad(false);
-  };
-
-  const deleteRow = async (index: number) => {
-    await deleteData("lotto", index.toString());
-    await getInitialData();
-  };
-
-  const saveDataOnBlur = async (e: any, index?: number) => {
-    const payload = {
-      [e.target.name]: e.target.value,
-    };
-    if (index !== undefined) {
-      await createData("lotto", payload, index);
-    } else {
-      await createData("lotto", payload, length);
-      e.target.value = "";
+  const handleInputChange = (e: any, id?: string) => {
+    const { name, value } = e.target;
+    if (value.length >= 2) {
+      if (id) {
+        const newDataList = dataList.map((item) => {
+          if (item.id === id) {
+            item[name] = value;
+          }
+          return item;
+        });
+        setDataList(newDataList);
+      } else {
+        setDataList(
+          dataList.concat({
+            id: generateUUID(),
+            [name]: value,
+          })
+        );
+      }
     }
-    await getInitialData();
-  };
+    e.target.value = "";
+  }
 
-  const onGetFocusValue = (e: any) => {
-    setFocusValue(e.target.value);
-  };
+  useEffect(() => { 
+    console.log("dataList", dataList);
+    const lastData = dataList[dataList.length - 1]
+    if (!lastData?.straight) {
+      const id = lastData?.id;
+      // focus last input
+      if (id) {
+        const input = document.getElementById(`input-${id}`);
+        if (input) {
+          (document.activeElement as HTMLElement)?.blur();
+          input?.getElementsByTagName("input")[0].focus();
+        }
+      }
+    }
+  }, [dataList]);
+
+  const generateUUID = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      // eslint-disable-next-line
+      const r = (Math.random() * 16) | 0,
+        // eslint-disable-next-line
+        v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
+  const deleteRow = (id: string) => {
+    const result = dataList.filter((item) => item.id !== id);
+    setDataList(result);
+  }
 
   const onClickGenerateSwap = async () => {
     const swap = swapDigitNumberUnique(focusValue);
     swap.forEach(async (item, index) => {
-      console.log(dataList);
       const payload = {
         number: item,
       };
-      await createData("lotto", payload, length + index + 1);
-      await getInitialData();
     });
   };
 
@@ -145,7 +172,7 @@ const ThreeDigitTable: React.FC = () => {
           </IonRow>
         </IonGrid>
         <IonGrid style={{ marginTop: -10 }}>
-          {length > 0 &&
+          {dataList.length > 0 &&
             dataList.map((data, index) => (
               <IonRow key={index} style={{ marginBottom: 10 }}>
                 <IonText
@@ -170,8 +197,7 @@ const ThreeDigitTable: React.FC = () => {
                     <IonInput
                       name="number"
                       value={data.number}
-                      onIonFocus={(e) => onGetFocusValue(e)}
-                      onIonBlur={(e) => saveDataOnBlur(e, data.id)}
+                      onIonBlur={(e) => handleInputChange(e, data.id)}
                       style={{ margin: "0px", fontSize: "22px" }}></IonInput>
                   </IonCard>
                 </IonCol>
@@ -187,8 +213,9 @@ const ThreeDigitTable: React.FC = () => {
                     }}>
                     <IonInput
                       name="straight"
+                      id={`input-${data.id}`}
                       value={data.straight}
-                      onIonBlur={(e) => saveDataOnBlur(e, data.id)}
+                      onIonBlur={(e) => handleInputChange(e, data.id)}
                       style={{ margin: "0px", fontSize: "22px" }}></IonInput>
                   </IonCard>
                 </IonCol>
@@ -206,7 +233,7 @@ const ThreeDigitTable: React.FC = () => {
                       name="twoDigit"
                       disabled={data.number?.length === 2 ? true : false}
                       value={data.twoDigit}
-                      onIonBlur={(e) => saveDataOnBlur(e, data.id)}
+                      onIonBlur={(e) => handleInputChange(e, data.id)}
                       style={{ margin: "0px", fontSize: "22px" }}></IonInput>
                   </IonCard>
                 </IonCol>
@@ -223,7 +250,7 @@ const ThreeDigitTable: React.FC = () => {
                     <IonInput
                       name="lower"
                       value={data.lower}
-                      onIonBlur={(e) => saveDataOnBlur(e, data.id)}
+                      onIonBlur={(e) => handleInputChange(e, data.id)}
                       style={{ margin: "0px", fontSize: "22px" }}></IonInput>
                   </IonCard>
                 </IonCol>
@@ -261,7 +288,7 @@ const ThreeDigitTable: React.FC = () => {
                 }}>
                 <IonInput
                   name="number"
-                  onIonBlur={(e) => saveDataOnBlur(e)}
+                  onIonBlur={(e) => handleInputChange(e)}
                   style={{ margin: "0px", fontSize: "22px" }}></IonInput>
               </IonCard>
             </IonCol>
@@ -277,7 +304,7 @@ const ThreeDigitTable: React.FC = () => {
                 }}>
                 <IonInput
                   name="straight"
-                  onIonBlur={(e) => saveDataOnBlur(e)}
+                  onIonBlur={(e) => handleInputChange(e)}
                   style={{ margin: "0px", fontSize: "22px" }}></IonInput>
               </IonCard>
             </IonCol>
@@ -293,7 +320,7 @@ const ThreeDigitTable: React.FC = () => {
                 }}>
                 <IonInput
                   name="twoDigit"
-                  onIonBlur={(e) => saveDataOnBlur(e)}
+                  onIonBlur={(e) => handleInputChange(e)}
                   style={{ margin: "0px", fontSize: "22px" }}></IonInput>
               </IonCard>
             </IonCol>
@@ -309,7 +336,7 @@ const ThreeDigitTable: React.FC = () => {
                 }}>
                 <IonInput
                   name="lower"
-                  onIonBlur={(e) => saveDataOnBlur(e)}
+                  onIonBlur={(e) => handleInputChange(e)}
                   style={{ margin: "0px", fontSize: "22px" }}></IonInput>
               </IonCard>
             </IonCol>
