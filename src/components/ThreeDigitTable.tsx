@@ -35,7 +35,7 @@ const ThreeDigitTable: React.FC = () => {
 
   const handleInputChange = (e: any, id?: string) => {
     const { name, value } = e.target;
-    if (value.length >= 2) {
+    if (value && value.length >= 2) {
       if (id) {
         const newDataList = dataList.map((item) => {
           if (item.id === id) {
@@ -52,17 +52,27 @@ const ThreeDigitTable: React.FC = () => {
           })
         );
       }
+    } else {
+      if (id) {
+        const newDataList = dataList.map((item) => {
+          if (item.id === id) {
+            item[name] = value;
+          }
+          return item;
+        });
+        setDataList(newDataList);
+      }
     }
     e.target.value = "";
+    setFocusValue("");
   }
 
   useEffect(() => { 
-    console.log("dataList", dataList);
     const lastData = dataList[dataList.length - 1]
     if (!lastData?.straight) {
       const id = lastData?.id;
       // focus last input
-      if (id) {
+      if (id && focusValue.length === 0) {
         const input = document.getElementById(`input-${id}`);
         if (input) {
           (document.activeElement as HTMLElement)?.blur();
@@ -87,13 +97,16 @@ const ThreeDigitTable: React.FC = () => {
     setDataList(result);
   }
 
-  const onClickGenerateSwap = async () => {
+  const onClickGenerateSwap = async () => {;
     const swap = swapDigitNumberUnique(focusValue);
-    swap.forEach(async (item, index) => {
-      const payload = {
+    const dataSwap = swap.map(async (item, index) => {
+      return {
+        id: generateUUID(),
         number: item,
       };
     });
+    const resulr = await Promise.all(dataSwap);
+    setDataList(dataList.concat(resulr));
   };
 
   const factorial = (n: number): number => {
@@ -126,6 +139,14 @@ const ThreeDigitTable: React.FC = () => {
     result.pop();
     return result.reverse();
   };
+
+  const enableSwap = () => {
+    const unique = new Set(focusValue);
+    if (unique.size === focusValue.length) {
+      return false;
+    }
+    return true;
+  }
 
   return (
     <div className="segment-container">
@@ -163,6 +184,7 @@ const ThreeDigitTable: React.FC = () => {
                   borderRadius: 10,
                   marginLeft: "-1.22px",
                 }}
+                disabled={focusValue.length === 0 || enableSwap()}
                 onClick={onClickGenerateSwap}>
                 <span style={{ color: "black", fontFamily: "Mali" }}>
                   6 กลับ
@@ -197,6 +219,7 @@ const ThreeDigitTable: React.FC = () => {
                     <IonInput
                       name="number"
                       value={data.number}
+                      onFocus={(e:any) => setFocusValue(e.target.value)}
                       onIonBlur={(e) => handleInputChange(e, data.id)}
                       style={{ margin: "0px", fontSize: "22px" }}></IonInput>
                   </IonCard>
