@@ -32,6 +32,8 @@ const ThreeDigitTable: React.FC = () => {
   const [dataList, setDataList] = useState<any[]>([]);
   const [load, setLoad] = useState<boolean>(false);
   const [focusValue, setFocusValue] = useState<string>("");
+  const [currentRowIndex, setCurrentRowIndex] = useState<number>(0);
+  const [currentRowId, setCurrentRowId] = useState<string>("");
 
   const [inputData, setInputData] = useState<InputData>({});
   const [dataListInput, setDataListInput] = useState<InputData[]>([]);
@@ -67,7 +69,7 @@ const ThreeDigitTable: React.FC = () => {
       }
     }
     e.target.value = "";
-    setFocusValue("");
+    saveFocusValue("");
   };
 
   useEffect(() => {
@@ -172,17 +174,41 @@ const ThreeDigitTable: React.FC = () => {
   };
 
   const copyNumber = (key: string) => {
-    const value = focusValue;
+    let tagId = "";
+    switch (key) {
+      case "straight":
+        tagId = `input-${currentRowId}`;
+        break;
+      case "twoDigit":
+        tagId = `input-two-${currentRowId}`;
+        break;
+      case "lower":
+        tagId = `input-lower-${currentRowId}`;
+        break;
+      default:
+        break;
+    }
+    const value = document.getElementById(tagId)?.getElementsByTagName("input")[0]?.value || "";
     if (value.length > 0) {
       if (!isNaN(Number(value))) {
-        const lastData = dataList[dataList.length - 1].id;
-        const newDataList = dataList.map((item) => {
-          if (item.id === lastData) {
+        const newDataList = dataList.map((item, index) => {
+          if (index === currentRowIndex + 1) {
             item[key] = value;
           }
           return item;
         });
         setDataList(newDataList);
+        if (currentRowIndex < dataList.length - 1) {
+          setCurrentRowIndex(currentRowIndex + 1);
+        } else {
+          for (let i = 0; i < dataList.length; i++) {
+            if (dataList[i][key] === "" || dataList[i][key] === undefined) {
+              setCurrentRowIndex(i - 1);
+              break;
+            }
+          }
+          presentToast("top", "ไม่สามารถคัดลอกได้");
+        }
       } else {
         presentToast("top", "กรุณาใส่เลข");
       }
@@ -243,9 +269,15 @@ const ThreeDigitTable: React.FC = () => {
     setLoad(false);
   };
 
+  const saveFocusValue = (value: string) => {
+    if (value.length > 0) {
+      setFocusValue(value);
+    }
+  };
+
   return (
     <div className="segment-container">
-      <div id="container-lotto" style={{ height: 500, overflow: "scroll" }}>
+      <div id="container-lotto">
         <IonToast isOpen={load} message="บันทึกข้อมูล..." />
         <IonList>
           <IonGrid>
@@ -272,7 +304,11 @@ const ThreeDigitTable: React.FC = () => {
             <IonRow>
               <IonText style={{ width: 18 }}></IonText>
               <IonCol>
-                <IonButton
+                <IonText className="grid-col-digit" onClick={onClickGenerateSwap} style={{ fontSize: "14px" }}>
+                  6 กลับ
+                </IonText>
+              </IonCol>
+              {/* <IonButton
                   color="medium"
                   size="small"
                   className="btn-generate-swap"
@@ -284,17 +320,16 @@ const ThreeDigitTable: React.FC = () => {
                   onClick={onClickGenerateSwap}
                 >
                   <span style={{ color: "black", fontFamily: "Mali" }}>6 กลับ</span>
-                </IonButton>
-              </IonCol>
+                </IonButton> */}
             </IonRow>
           </IonGrid>
-          <IonGrid style={{ marginTop: -10 }}>
+          <IonGrid style={{ marginTop: -10, overflow: "scroll" }}>
             {dataList.length > 0 &&
               dataList.map((data, index) => (
                 <IonRow key={index} style={{ marginBottom: 10 }}>
                   <IonText
                     style={{
-                      fontSize: "20px",
+                      fontSize: "14px",
                       color: "#9d9fa6",
                       paddingTop: 10,
                       paddingRight: 10,
@@ -316,8 +351,15 @@ const ThreeDigitTable: React.FC = () => {
                       <IonInput
                         name="number"
                         value={data.number}
-                        onFocus={(e: any) => setFocusValue(e.target.value)}
+                        onFocus={(e: any) => {
+                          saveFocusValue(e.target.value);
+                          setCurrentRowIndex(index);
+                        }}
                         onIonBlur={(e) => handleInputChange(e, data.id)}
+                        onIonChange={(e) => {
+                          saveFocusValue(e.target.value as string);
+                          setCurrentRowIndex(index);
+                        }}
                         style={{ margin: "0px", fontSize: "22px" }}
                       ></IonInput>
                     </IonCard>
@@ -337,8 +379,17 @@ const ThreeDigitTable: React.FC = () => {
                         name="straight"
                         id={`input-${data.id}`}
                         value={data.straight}
-                        onFocus={(e: any) => setFocusValue(e.target.value)}
+                        onFocus={(e: any) => {
+                          saveFocusValue(e.target.value);
+                          setCurrentRowIndex(data.id);
+                          setCurrentRowId(data.id);
+                        }}
                         onIonBlur={(e) => handleInputChange(e, data.id)}
+                        onIonChange={(e) => {
+                          saveFocusValue(e.target.value as string);
+                          setCurrentRowIndex(index);
+                          setCurrentRowId(data.id);
+                        }}
                         style={{ margin: "0px", fontSize: "22px" }}
                       ></IonInput>
                     </IonCard>
@@ -356,10 +407,18 @@ const ThreeDigitTable: React.FC = () => {
                     >
                       <IonInput
                         name="twoDigit"
+                        id={`input-two-${data.id}`}
                         disabled={data.number?.length === 2 ? true : false}
                         value={data.twoDigit}
-                        onFocus={(e: any) => setFocusValue(e.target.value)}
+                        onFocus={(e: any) => {
+                          saveFocusValue(e.target.value);
+                          setCurrentRowIndex(index);
+                        }}
                         onIonBlur={(e) => handleInputChange(e, data.id)}
+                        onIonChange={(e) => {
+                          saveFocusValue(e.target.value as string);
+                          setCurrentRowIndex(index);
+                        }}
                         style={{ margin: "0px", fontSize: "22px" }}
                       ></IonInput>
                     </IonCard>
@@ -377,9 +436,17 @@ const ThreeDigitTable: React.FC = () => {
                     >
                       <IonInput
                         name="lower"
+                        id={`input-lower-${data.id}`}
                         value={data.lower}
-                        onFocus={(e: any) => setFocusValue(e.target.value)}
+                        onFocus={(e: any) => {
+                          saveFocusValue(e.target.value);
+                          setCurrentRowIndex(index);
+                        }}
                         onIonBlur={(e) => handleInputChange(e, data.id)}
+                        onIonChange={(e) => {
+                          saveFocusValue(e.target.value as string);
+                          setCurrentRowIndex(index);
+                        }}
                         style={{ margin: "0px", fontSize: "22px" }}
                       ></IonInput>
                     </IonCard>
@@ -397,7 +464,7 @@ const ThreeDigitTable: React.FC = () => {
             <IonRow>
               <IonText
                 style={{
-                  fontSize: "20px",
+                  fontSize: "14px",
                   color: "#9d9fa6",
                   paddingTop: 10,
                   paddingRight: 10,
@@ -419,6 +486,7 @@ const ThreeDigitTable: React.FC = () => {
                   <IonInput
                     name="number"
                     onIonBlur={(e) => handleInputChange(e)}
+                    onIonChange={(e) => setFocusValue(e.target.value as string)}
                     style={{ margin: "0px", fontSize: "22px" }}
                   ></IonInput>
                 </IonCard>
@@ -488,18 +556,18 @@ const ThreeDigitTable: React.FC = () => {
         <IonRow>
           <IonText style={{ width: 20 }}></IonText>
           <IonCol className="grid-col-digit" onClick={swap2Char}>
-            <IonText style={{ fontSize: "12px" }}>กลับเลข</IonText>
+            <IonText style={{ fontSize: "14px" }}>กลับเลข</IonText>
           </IonCol>
           <IonCol className="grid-col-digit" onClick={(_) => copyNumber("straight")}>
-            <IonText style={{ fontSize: "12px" }}>คัดลอก</IonText>
+            <IonText style={{ fontSize: "14px" }}>คัดลอก</IonText>
           </IonCol>
           <IonCol className="grid-col-digit">
-            <IonText style={{ fontSize: "12px" }} onClick={(_) => copyNumber("twoDigit")}>
+            <IonText style={{ fontSize: "14px" }} onClick={(_) => copyNumber("twoDigit")}>
               คัดลอก
             </IonText>
           </IonCol>
           <IonCol className="grid-col-digit">
-            <IonText style={{ fontSize: "12px" }} onClick={(_) => copyNumber("lower")}>
+            <IonText style={{ fontSize: "14px" }} onClick={(_) => copyNumber("lower")}>
               คัดลอก
             </IonText>
           </IonCol>

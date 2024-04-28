@@ -1,20 +1,16 @@
-import {
-  IonCol,
-  IonContent,
-  IonGrid,
-  IonHeader,
-  IonPage,
-  IonRow,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import Header from "../components/Header";
 import SegmentSwitch from "../components/SegmentSwitch";
 import ThreeDigitTable from "../components/ThreeDigitTable";
 import { useState } from "react";
 import TwoDigitTable from "../components/TwoDigitTable";
 
-const HomePage: React.FC = () => {
+interface ContainerProps {
+  totalTwo: number;
+  totalThree: number;
+}
+
+const HomePage = (props: ContainerProps) => {
   const [tab, setTab] = useState("three-digit");
 
   const onSelectSegment = (segment: any) => {
@@ -27,15 +23,9 @@ const HomePage: React.FC = () => {
 
   return (
     <IonPage>
-      <IonContent fullscreen color="primary">
-        <Header
-          totalPriceOfTwoDigits={999999}
-          totalPriceOfThreeDigits={300000}
-        />
-        <div className="container">
-          {/* <SegmentSwitch onChange={onSelectSegment} /> */}
-          {tab === "two-digit" ? <TwoDigitTable /> : <ThreeDigitTable />}
-        </div>
+      <IonContent fullscreen color="primary" scrollY={false}>
+        <Header totalPriceOfTwoDigits={props.totalTwo} totalPriceOfThreeDigits={props.totalThree} />
+        <div className="container">{tab === "two-digit" ? <TwoDigitTable /> : <ThreeDigitTable />}</div>
       </IonContent>
     </IonPage>
   );

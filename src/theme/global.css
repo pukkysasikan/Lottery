@@ -1,20 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Mali&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300&display=swap");
 
 html,
 ion-text {
   padding: 0;
   margin: 0;
-  font-family: "Mali", cursive;
+  font-family: "Prompt", cursive;
 }
 
 .container {
   background-color: #fff;
+  height: calc(100vh - 210px);
   width: 100%;
-  height: calc(100vh - 23.5vh);
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: scroll;
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
 }
@@ -25,14 +24,14 @@ ion-text {
 
 .segment-container {
   width: 90%;
+
   margin-top: 5%;
   .segment {
-    height: 75px;
     border-radius: 20px;
+    display: flex;
   }
 }
 ion-segment {
-  margin-top: 0.5rem;
   margin-left: auto;
   margin-right: auto;
   width: 95%;
@@ -90,8 +89,10 @@ ion-segment ion-segment-button {
 
 .icon-delete-num {
   color: #ff8a65;
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
+  box-shadow: none;
+  border: none !important;
 }
 
 .input-disabled {
@@ -102,7 +103,11 @@ ion-segment ion-segment-button {
 }
 
 .btn-delete-num {
-  --padding-bottom: 8px;
+  --padding-bottom: 0px;
+}
+
+.btn-print {
+  --padding-bottom: 0px;
 }
 
 .btn-probability {
@@ -111,6 +116,77 @@ ion-segment ion-segment-button {
 }
 
 .btn-generate-swap {
-  box-shadow: rgba(66, 39, 9, 0.25) 0px 4px 8px -2px,
-    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  box-shadow: rgba(66, 39, 9, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+
+.col-order {
+  background-color: #f1f1f1;
+  height: 40px !important;
+}
+
+.row-odd {
+  background-color: #d9d9d9;
+}
+
+.row-even {
+  background-color: #fff;
+}
+.header-sticky {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0px;
+  z-index: 3 !important;
+}
+.icon-delete {
+  color: #ff8a65;
+  font-size: 20px;
+  padding: 10px;
+}
+
+.col-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pdf-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+  background-color: ghostwhite;
+  .a4-paper {
+    background-color: white;
+    width: 21cm;
+    height: 29.7cm;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media print {
+  body {
+    visibility: hidden;
+  }
+  @page {
+    margin: 0;
+  }
+  #section-to-print {
+    overflow: hidden;
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+.toolbar-section {
+  height: 50px;
+  .title {
+    margin-left: calc(50% - 40px);
+  }
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
