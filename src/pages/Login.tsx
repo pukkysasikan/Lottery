@@ -21,8 +21,8 @@ const Login: React.FC = () => {
       <IonContent>
         <form action="" onSubmit={handleLogin}>
           <IonList>
-            <IonInput label="Text input" name="username" placeholder="Enter text"></IonInput>
-            <IonInput label="Number input" name="password" placeholder="000"></IonInput>
+            <IonInput label="Usernane" name="username" placeholder="Enter text"></IonInput>
+            <IonInput label="Password input" name="password" placeholder="000"></IonInput>
             <IonButton type="submit">Default</IonButton>
           </IonList>
         </form>
