@@ -70,13 +70,14 @@ const App: React.FC = () => {
   };
 
   const path = window.location.pathname;
+  const hide = ["/", "/report"].includes(path) ? "hidden" : "visible";
 
   return (
     <IonApp>
       <IonReactRouter>
         <IonTabs onIonTabsDidChange={onTabChange}>
           <IonRouterOutlet>
-            <Route exact path="/tab1">
+            <Route path="/tab1">
               <HomePage totalThree={totalThree} totalTwo={totalTwo} />
             </Route>
             <Route path="/tab2">
@@ -88,16 +89,15 @@ const App: React.FC = () => {
             <Route path="/report">
               <Report />
             </Route>
-
-            <Route path="/login">
+            <Route exact path="/">
               <Login />
             </Route>
-            <Route exact path="/">
-              <Redirect to="/tab1" />
-            </Route>
           </IonRouterOutlet>
-
-          <IonTabBar slot="bottom" mode="ios" style={{ paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+          <IonTabBar
+            slot="bottom"
+            mode="ios"
+            style={{ paddingTop: "0.5rem", paddingBottom: "0.5rem", visibility: hide }}
+          >
             <IonTabButton tab="tab1" href="/tab1">
               <IonIcon aria-hidden="true" icon={homeOutline} />
               <IonLabel>หนัาหลัก</IonLabel>

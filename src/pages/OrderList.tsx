@@ -82,10 +82,10 @@ const Tab2 = (props: ContainerProps) => {
             <IonText>{item.number}</IonText>
           </IonCol>
           <IonCol className="ion-no-padding col-center" style={{ textAlign: "center" }}>
-            <IonText>{item.two_digit}</IonText>
+            <IonText>{item.straight}</IonText>
           </IonCol>
           <IonCol className="col-order ion-no-padding col-center" style={{ textAlign: "center" }}>
-            <IonText>{item.straight}</IonText>
+            <IonText>{item.two_digit}</IonText>
           </IonCol>
           <IonCol className="ion-no-padding col-center" style={{ textAlign: "center" }}>
             <IonText>{item.lower}</IonText>
@@ -174,7 +174,7 @@ const Tab2 = (props: ContainerProps) => {
               <IonText>เลข</IonText>
             </IonCol>
             <IonCol className="col-order" style={{ textAlign: "center" }}>
-              <IonText>บน</IonText>
+              <IonText>ตรง</IonText>
             </IonCol>
             <IonCol style={{ textAlign: "center", backgroundColor: "white" }}>
               <IonText>โต๊ด</IonText>

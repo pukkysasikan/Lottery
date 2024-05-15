@@ -117,38 +117,35 @@ const ThreeDigitTable: React.FC = () => {
       };
     });
     const resulr = await Promise.all(dataSwap);
-    setDataList(dataList.concat(resulr));
-  };
-
-  const factorial = (n: number): number => {
-    if (n === 1) {
-      return 1;
+    if (dataSwap.length > 1) {
+      setDataList(dataList.concat(resulr));
     }
-    return n * factorial(n - 1);
   };
 
   const swapDigitNumberUnique = (number: String) => {
-    // [123, 132, 213, 231, 312, 321]
-    const result = [];
-    const arr = number.split("");
-    const len = arr.length;
-
-    const total = factorial(len);
-    let i = 0;
-    while (i < total) {
-      const random = Math.floor(Math.random() * len);
-      const temp = arr[random];
-      arr[random] = arr[0];
-      arr[0] = temp;
-      const str = arr.join("");
-      if (result.indexOf(str) === -1) {
-        result.push(str);
-        i++;
+    // input string: 123
+    // result is [132, 213, 231, 312, 321]
+    const result: string[] = [];
+    const swap = (arr: string[], a: number, b: number) => {
+      const temp = arr[a];
+      arr[a] = arr[b];
+      arr[b] = temp;
+      return arr.join("");
+    };
+    const swapDigit = (arr: string[], start: number) => {
+      if (start === arr.length - 1) {
+        result.push(arr.join(""));
+        return;
       }
-    }
-    // pop ตัวเดิมออก
-    result.pop();
-    return result.reverse();
+      for (let i = start; i < arr.length; i++) {
+        swap(arr, start, i);
+        swapDigit(arr, start + 1);
+        swap(arr, start, i);
+      }
+    };
+    swapDigit(number.split(""), 0);
+    result.shift();
+    return result;
   };
 
   const enableSwap = () => {
@@ -263,7 +260,8 @@ const ThreeDigitTable: React.FC = () => {
       })
     );
     const res = await axios.post("https://lotto-backend.vercel.app/api/v1/lottories", result);
-    if (res && res.status === 200 && res.data.status === "OK") {
+    if (res && res.status === 200 && res.data.message === "OK") {
+      setDataList([]);
       presentToast("top", "บันทึกข้อมูลสำเร็จ");
     }
     setLoad(false);
@@ -323,7 +321,7 @@ const ThreeDigitTable: React.FC = () => {
                 </IonButton> */}
             </IonRow>
           </IonGrid>
-          <IonGrid style={{ marginTop: -10, overflow: "scroll" }}>
+          <IonGrid style={{ marginTop: -10, overflow: "scroll", height: "450px" }}>
             {dataList.length > 0 &&
               dataList.map((data, index) => (
                 <IonRow key={index} style={{ marginBottom: 10 }}>

@@ -4,8 +4,9 @@ import http from "../utils/AxiosUtils";
 export default function getReport() {
   const [data, setData] = useState<any>([]);
   const [header, setHeader] = useState<any>([]);
+  const [type, setType] = useState<any>("");
   const twoDigit = ["เลข", "บน", "ล่าง"];
-  const threeDigit = ["เลข", "ตรง", "บน", "ล่าง"];
+  const threeDigit = ["เลข", "ตรง", "โต๊ด", "ล่าง"];
 
   const getLottoryOrder = async (id: string) => {
     const res = await http.get("/lottories");
@@ -37,9 +38,9 @@ export default function getReport() {
         setHeader(twoDigit);
         return {
           number: item,
-          upper: data
+          straight: data
             .filter((d: any) => d.number === item)
-            .reduce((acc: any, curr: any) => Number(acc) + Number(curr.two_digit), 0),
+            .reduce((acc: any, curr: any) => Number(acc) + Number(curr.straight), 0),
           lower: data
             .filter((d: any) => d.number === item)
             .reduce((acc: any, curr: any) => Number(acc) + Number(curr.lower), 0),
@@ -53,6 +54,7 @@ export default function getReport() {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const id = queryParams.get("type");
+    setType(id);
     getLottoryOrder(id as string);
   }, []);
 
@@ -111,11 +113,17 @@ export default function getReport() {
               {data.map((item: any, index: number) => (
                 <tr key={index}>
                   <td>{item.number}</td>
-                  {item.straight || item.straight >= 0 ? <td>{item.straight}</td> : null}
-                  <td>{item.upper}</td>
+                  <td>{item.straight}</td>
+                  {item.upper && <td>{item.upper}</td>}
                   <td>{item.lower}</td>
                 </tr>
               ))}
+              <tr>
+                <td>รวม</td>
+                <td>{data.reduce((acc: any, curr: any) => Number(acc) + Number(curr.straight), 0)}</td>
+                {type === "3" && <td>{data.reduce((acc: any, curr: any) => Number(acc) + Number(curr.upper), 0)}</td>}
+                <td>{data.reduce((acc: any, curr: any) => Number(acc) + Number(curr.lower), 0)}</td>
+              </tr>
             </tbody>
           </table>
         </div>

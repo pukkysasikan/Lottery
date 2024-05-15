@@ -23,7 +23,7 @@ const HomePage = (props: ContainerProps) => {
 
   return (
     <IonPage>
-      <IonContent fullscreen color="primary" scrollY={false}>
+      <IonContent fullscreen color="primary">
         <Header totalPriceOfTwoDigits={props.totalTwo} totalPriceOfThreeDigits={props.totalThree} />
         <div className="container">{tab === "two-digit" ? <TwoDigitTable /> : <ThreeDigitTable />}</div>
       </IonContent>

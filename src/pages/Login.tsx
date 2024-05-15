@@ -1,4 +1,4 @@
-import { IonList, IonItem, IonInput, IonButton, IonContent, IonPage } from "@ionic/react";
+import { IonList, IonItem, IonInput, IonButton, IonContent, IonPage, IonText } from "@ionic/react";
 import { useState } from "react";
 import http from "../utils/AxiosUtils";
 
@@ -9,8 +9,8 @@ const Login: React.FC = () => {
     e.preventDefault();
     const res = await http.post("/login", { username, password });
     if (res.data && res.data.status_code === 200 && res.data.message === "OK") {
-      console.log("Login success");
       sessionStorage.setItem("isLogin", res.data.data.id);
+      location.href = "/tab1";
     } else {
       console.log("Login failed");
     }
@@ -23,7 +23,9 @@ const Login: React.FC = () => {
           <IonList>
             <IonInput label="Usernane" name="username" placeholder="Enter text"></IonInput>
             <IonInput label="Password input" name="password" placeholder="000"></IonInput>
-            <IonButton type="submit">Default</IonButton>
+            <IonButton type="submit">
+              <IonText>เข้าสู่ระบบ</IonText>
+            </IonButton>
           </IonList>
         </form>
       </IonContent>
